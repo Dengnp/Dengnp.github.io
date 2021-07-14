@@ -151,7 +151,37 @@ $(document).ready(function () {
   scrollToTop();
 
   wrapImageWithFancyBox();
-  $("body").mCustomScrollbar();
+  $("body").mCustomScrollbar({scrollInertia:100,mouseWheel:{ scrollAmount:100 },
+    callbacks:{
+      whileScrolling:function(e){
+       
+        pageScroll()
+        var anchorList = $(".anchor");
+       
+        anchorList.each(function () {
+          var tocLink = $('.article-toc a[href="#' + $(this).attr("id") + '"]');
+          var anchorTop = $(this).offset().top;
+          var windowTop = Math.abs($('#mCSB_1_container').offset().top) ;
+    
+          if (anchorTop <= 100) {
+            tocLink.addClass("read");
+            
+          } else {
+            tocLink.removeClass("read");
+          }
+       
+        });
+       if($('.read').length){
+         $('#tree').mCustomScrollbar('scrollTo', '.'+ $('.read')[$('.read').length-1].classList[0], {
+           scrollInertia: 500
+       });
+       }
+
+      
+      },
+     
+  }
+  });
   $("#tree").mCustomScrollbar();
 });
 
@@ -271,37 +301,7 @@ function showArticleIndex() {
           scrollInertia: 500
       });
     });
-    $("body").mCustomScrollbar({
-      callbacks:{
-        whileScrolling:function(e){
-         
-          pageScroll()
-          var anchorList = $(".anchor");
-         
-          anchorList.each(function () {
-            var tocLink = $('.article-toc a[href="#' + $(this).attr("id") + '"]');
-            var anchorTop = $(this).offset().top;
-            var windowTop = Math.abs($('#mCSB_1_container').offset().top) ;
-      
-            if (anchorTop <= 100) {
-              tocLink.addClass("read");
-              
-            } else {
-              tocLink.removeClass("read");
-            }
-         
-          });
-         if($('.read').length){
-           $('#tree').mCustomScrollbar('scrollTo', '.'+ $('.read')[$('.read').length-1].classList[0], {
-             scrollInertia: 500
-         });
-         }
-
-        
-        },
-       
-    }
-    })
+    // $("body").mCustomScrollbar()
 
   }
   $(".article-toc.active-toc").show();
@@ -348,6 +348,7 @@ function pjaxLoad() {
   });
 }
 
+
 // 搜索框输入事件
 function serachTree() {
   // 解决搜索大小写问题
@@ -369,7 +370,7 @@ function serachTree() {
       if ($("#tree .active").length) {
         showActiveTree($("#tree .active"), true);
       } else {
-        $("#tree").children().css("display", "block");
+        $("#tree #mCSB_2_container").children().css("display", "block");
       }
     }
     // 有值就搜索，并且展开父目录
